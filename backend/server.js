@@ -42,8 +42,8 @@ app.post("/api/register", (req, res) => {
     INSERT INTO webinar_registrations
     (firstName, lastName, email, phone, linkedIn, role,
      college, degree, branch, passingYear, location,
-     organization, experience, workLocation, description)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     organization, experience, workLocation)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -63,7 +63,6 @@ app.post("/api/register", (req, res) => {
     data.organization || null,
     data.experience || null,
     data.workLocation || null,
-    data.description || null,
   ];
 
   db.query(query, values, (err, result) => {
@@ -113,7 +112,12 @@ app.post("/api/register", (req, res) => {
           <div style="padding: 30px; text-align: left; color: #333;">
             <h2 style="color: #002855;">Thank You, ${firstName}!</h2>
             <p style="font-size: 16px; line-height: 1.6;">
-              You have successfully registered for the <b> Webinar on Cybersecurity</b> workshop.
+              You have successfully registered for the <b>CyberShield 2025</b>.
+            </p>
+            <p style="font-size: 16px; line-height: 1.6;">
+              Date: 07-Dec-2025<br>
+              Time: 10 AM - 11:30 AM<br>
+              Webinar link will be shared soon.
             </p>
             <p style="font-size: 16px; line-height: 1.6;">
               If you have any queries, feel free to contact us at
@@ -174,10 +178,13 @@ app.post("/api/register", (req, res) => {
           <div style="padding: 30px; text-align: left; color: #333;">
             <h2 style="color: #002855;">Thank You, ${firstName}!</h2>
             <p style="font-size: 16px; line-height: 1.6;">
-              You have successfully registered for the <b>Webinar on Cybersecurity</b> workshop.
+              You have successfully registered for the <b>CyberShield 2025</b>.
             </p>
-
-    
+            <p style="font-size: 16px; line-height: 1.6;">
+              Date: 07-Dec-2025<br>
+              Time: 10 AM - 11:30 AM<br>
+              Webinar link will be shared soon.
+            </p>
             <p style="font-size: 16px; line-height: 1.6;">
               If you have any queries, feel free to contact us at
               <a href="mailto:${process.env.QUERIES_MAIL}" style="color: #002855; text-decoration: none;"><b>${process.env.QUERIES_MAIL}</b></a>.
@@ -223,7 +230,6 @@ app.post("/api/register", (req, res) => {
           }),
         ]);
 
-        console.log("📬 Email Status:", JSON.stringify(responses, null, 2));
 
         return res.status(200).json({
           message: "Registration saved & emails sent successfully!",

@@ -1,0 +1,88 @@
+/* Make entire layout responsive */
+@media (max-width: 992px) {
+  /* Reduce padding on mobile */
+  .min-vh-100 {
+    padding: 20px !important;
+  }
+
+  /* Logo resize */
+  .min-vh-100 img[alt="Logo"] {
+    height: 60px !important;
+  }
+
+  /* Poster image responsiveness */
+  img[alt="Webinar Poster"] {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Buttons full width on mobile */
+  button.px-5 {
+    width: 100% !important;
+  }
+
+  /* Fix large text overflow */
+  h1.display-8 {
+    font-size: 1.9rem !important;
+    text-align: center;
+  }
+
+  .lead, p, li.fs-5 {
+    font-size: 1rem !important;
+  }
+
+  /* Center all sections */
+  .text-lg-start {
+    text-align: center !important;
+  }
+
+  /* Remove huge margins */
+  .mt-20, .mt-5, .mb-5 {
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* Modal responsiveness */
+  .modal-body {
+    padding: 20px !important;
+  }
+
+  .modal-dialog {
+    margin: 10px !important;
+  }
+
+  /* Form input full width */
+  .form-control,
+  .react-tel-input .form-control {
+    width: 100% !important;
+  }
+
+  /* Fix phone input alignment */
+  .react-tel-input .selected-flag {
+    background-color: #1e293b !important;
+  }
+
+  /* Row gap fix */
+  .row {
+    gap: 12px !important;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 576px) {
+  h1.display-8 {
+    font-size: 1.6rem !important;
+  }
+
+  img[alt="Logo"] {
+    height: 50px !important;
+  }
+
+  .react-tel-input .form-control {
+    font-size: 14px !important;
+  }
+
+  .modal-body {
+    padding: 15px !important;
+  }
+}

@@ -1,21 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Row, Col, ProgressBar } from "react-bootstrap";
+import React, { useState } from "react";
+import { Modal, Button, Form, Row, Col, Toast, ToastContainer } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import axios from "axios";
 import { motion } from "framer-motion";
+import "./webinarpage.css";
+
 
 const WebinarPage = () => {
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "", lastName: "", email: "", phone: "", role: "", linkedIn: "",
     college: "", degree: "", branch: "", passingYear: "", location: "",
-    organization: "", experience: "", workLocation: "", description: "",
+    organization: "", experience: "", workLocation: "",
+    // description field removed
   });
+   const initialForm = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    role: "",
+    linkedIn: "",
+    college: "",
+    degree: "",
+    branch: "",
+    passingYear: "",
+    location: "",
+    organization: "",
+    experience: "",
+    workLocation: "",
+  };
 
   const [errors, setErrors] = useState({});
-  const [progress, setProgress] = useState(0);
+  
+  // Toast states
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
   const handleOpen = () => setShow(true);
   const handleClose = () => setShow(false);
@@ -27,37 +48,6 @@ const WebinarPage = () => {
   const handlePhoneChange = (value) => {
     setFormData({ ...formData, phone: value });
   };
-
-  // Progress calculation
-  useEffect(() => {
-    let filled = 0;
-    let totalFields = 5;
-
-    if (formData.firstName) filled++;
-    if (formData.lastName) filled++;
-    if (formData.email) filled++;
-    if (formData.phone) filled++;
-    if (formData.role) filled++;
-
-    if (formData.role === "Student") {
-      totalFields = 10;
-      if (formData.college) filled++;
-      if (formData.degree) filled++;
-      if (formData.branch) filled++;
-      if (formData.passingYear) filled++;
-      if (formData.location) filled++;
-    }
-
-    if (formData.role === "Working Professional") {
-      totalFields = 9;
-      if (formData.organization) filled++;
-      if (formData.experience) filled++;
-      if (formData.workLocation) filled++;
-      if (formData.description) filled++;
-    }
-
-    setProgress(Math.round((filled / totalFields) * 100));
-  }, [formData]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -80,7 +70,7 @@ const WebinarPage = () => {
       if (!formData.organization) newErrors.organization = "Required";
       if (!formData.experience) newErrors.experience = "Required";
       if (!formData.workLocation) newErrors.workLocation = "Required";
-      if (!formData.description) newErrors.description = "Required";
+      // description validation removed
     }
 
     setErrors(newErrors);
@@ -93,16 +83,37 @@ const WebinarPage = () => {
 
     try {
       await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/register`, formData);
-      alert("🎉 Registration Successful! Check your email.");
+      console.log(`${process.env.REACT_APP_BACKEND_URL}/api/register`);
+      setFormData(initialForm);
       handleClose();
+      setToast({ show: true, message: "Thank you! 🎉 Registration Successful! Check your email.", type: "success" });
     } catch (err) {
-      alert("Error submitting form");
+      setToast({ show: true, message: "Error submitting form. Please try again.", type: "danger" });
     }
   };
 
   return (
     <>
-      {/* Main Background */}
+      {/* Toast Container - placed at top-right of the screen */}
+      <ToastContainer position="top-end" className="p-3" style={{ zIndex: 1050 }}>
+        <Toast
+          onClose={() => setToast({ ...toast, show: false })}
+          show={toast.show}
+          delay={5000}
+          autohide
+          bg={toast.type}
+          className="text-white shadow-lg"
+        >
+          <Toast.Header closeButton className="bg-transparent border-0">
+            <strong className="me-auto">
+              {toast.type === "success" ? "✅ Success" : "❌ Error"}
+            </strong>
+          </Toast.Header>
+          <Toast.Body className="fw-medium fs-5">{toast.message}</Toast.Body>
+        </Toast>
+      </ToastContainer>
+
+      {/* Main Background - unchanged */}
       <div
         className="min-vh-100"
         style={{
@@ -129,7 +140,7 @@ const WebinarPage = () => {
 
           {/* Hero Section: Image + Content */}
           <div className="row align-items-start g-5">
-            {/* Left: Poster Image + CTA (Duration + Button) */}
+            {/* Left: Poster Image + CTA */}
             <div className="col-lg-6 order-lg-1 order-2">
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
@@ -150,7 +161,6 @@ const WebinarPage = () => {
                 />
               </motion.div>
 
-              {/* Duration + Register Button - Placed below image on mobile, beside on desktop */}
               <div className="d-lg-none text-center mt-4"></div>
 
               <div className="d-none d-lg-block text-center">
@@ -158,7 +168,7 @@ const WebinarPage = () => {
                   marginTop:"50px",
                   minWidth: "200px"
                 }}>
-                  ⏰ Duration: 1 hr 20 mins 
+                  ⏰ Duration: 1 hr 30 mins -- Free Registration
                 </div>
                 <br />
                 <Button
@@ -186,7 +196,7 @@ const WebinarPage = () => {
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
                 <h1 className="display-8 fw-bold mb-4" style={{ color: "#60a5fa" }}>
-                  Webinar on Cybersecurity
+                  CyberShield 2025
                 </h1>
 
                 <div className="mb-5">
@@ -221,7 +231,6 @@ const WebinarPage = () => {
 
                 <hr className="border-secondary opacity-30 my-5" />
 
-                {/* Perks & Live Demos Side by Side */}
                 <div className="row g-5">
                   <div className="col-md-6">
                     <h4 className="text-success fw-bold mb-3">Perks You Get</h4>
@@ -257,7 +266,6 @@ const WebinarPage = () => {
                   </div>
                 </div>
 
-                {/* Mobile-only CTA (shown below content on small screens) */}
                 <div className="d-lg-none text-center mt-5">
                   <div className="d-inline-block bg-primary text-white px-4 py-2 rounded-pill mb-4 fs-6">
                     ⏰ Duration: 1 hr 20 mins • Free Registration
@@ -274,7 +282,7 @@ const WebinarPage = () => {
                       minWidth: "300px",
                     }}
                   >
-                    Register Now – It's Free!
+                    Register Now
                   </Button>
                 </div>
               </motion.div>
@@ -283,86 +291,164 @@ const WebinarPage = () => {
         </div>
       </div>
 
-      {/* Modal - Unchanged */}
+      {/* MODAL - Clean form without progress bar or description field */}
       <Modal show={show} onHide={handleClose} centered size="lg" backdrop="static">
         <Modal.Header closeButton className="border-0 text-white" style={{ background: "linear-gradient(90deg, #1e3a8a, #3b82f6)" }}>
-          <Modal.Title className="fw-bold fs-3">Complete Your Registration</Modal.Title>
+          <Modal.Title className="fw-medium fs-4">Complete Your Registration</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="p-4" style={{ background: "#0f172a" }}>
-          <div className="mb-4">
-            {/* <div className="d-flex justify-content-between text-white mb-2">
-              <span>Form Progress</span>
-              <span>{progress}% Complete</span>
-            </div> */}
-            {/* <ProgressBar now={progress} animated variant="success" style={{ height: "10px", borderRadius: "10px" }} className="shadow-sm" /> */}
-          </div>
-
+        <Modal.Body className="p-5" style={{ background: "#0f172a" }}>
           <Form onSubmit={handleSubmit}>
-            {/* Form fields remain exactly the same */}
-            <Row className="g-3">
+            {/* Common Fields */}
+            <Row className="g-4">
               <Col md={6}>
-                <Form.Label className="text-white">First Name <span className="text-danger">*</span></Form.Label>
-                <Form.Control name="firstName" value={formData.firstName} onChange={handleChange} isInvalid={!!errors.firstName} className="bg-dark text-white border-0" />
+                <Form.Label className="text-white fw-medium">First Name <span className="text-danger">*</span></Form.Label>
+                <Form.Control
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  isInvalid={!!errors.firstName}
+                  className="bg-dark text-white border-0 rounded-3 shadow-sm"
+                  style={{ height: "52px" }}
+                  placeholder="Enter your first name"
+                />
                 <Form.Control.Feedback type="invalid">{errors.firstName}</Form.Control.Feedback>
               </Col>
               <Col md={6}>
-                <Form.Label className="text-white">Last Name <span className="text-danger">*</span></Form.Label>
-                <Form.Control name="lastName" value={formData.lastName} onChange={handleChange} isInvalid={!!errors.lastName} className="bg-dark text-white border-0" />
+                <Form.Label className="text-white fw-medium">Last Name <span className="text-danger">*</span></Form.Label>
+                <Form.Control
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  isInvalid={!!errors.lastName}
+                  className="bg-dark text-white border-0 rounded-3 shadow-sm"
+                  style={{ height: "52px" }}
+                  placeholder="Enter your last name"
+                />
+                <Form.Control.Feedback type="invalid">{errors.lastName}</Form.Control.Feedback>
               </Col>
             </Row>
 
-            <Row className="g-3 mt-2">
+            <Row className="g-4 mt-3">
               <Col md={6}>
-                <Form.Label className="text-white">Email <span className="text-danger">*</span></Form.Label>
-                <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} isInvalid={!!errors.email} className="bg-dark text-white border-0" />
+                <Form.Label className="text-white fw-medium">Email <span className="text-danger">*</span></Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  isInvalid={!!errors.email}
+                  className="bg-dark text-white border-0 rounded-3 shadow-sm"
+                  style={{ height: "52px" }}
+                  placeholder="you@example.com"
+                />
+                <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
               </Col>
               <Col md={6}>
-                <Form.Label className="text-white">Phone <span className="text-danger">*</span></Form.Label>
-                <PhoneInput country="in" value={formData.phone} onChange={handlePhoneChange} inputClass="form-control bg-dark text-white border-0" />
-                {errors.phone && <small className="text-danger d-block">{errors.phone}</small>}
+                <Form.Label className="text-white fw-medium">Phone <span className="text-danger">*</span></Form.Label>
+                <PhoneInput
+                  country="in"
+                  value={formData.phone}
+                  onChange={handlePhoneChange}
+                  inputClass="w-100 bg-dark text-white border-0 rounded-3 shadow-sm"
+                  containerClass="mt-1"
+                  inputStyle={{ height: "52px", background: "#1e293b", border: "none", color: "#fff" }}
+                  buttonClass="bg-dark border-0"
+                />
+                {errors.phone && <small className="text-danger d-block mt-1">{errors.phone}</small>}
               </Col>
             </Row>
 
-            <Form.Group className="mt-3">
-              <Form.Label className="text-white">Current Role <span className="text-danger">*</span></Form.Label>
-              <Form.Select name="role" value={formData.role} onChange={handleChange} className="bg-dark text-white border-0">
+            <div className="mt-4">
+              <Form.Label className="text-white fw-medium">Current Role <span className="text-danger">*</span></Form.Label>
+              <Form.Select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="bg-dark text-white border-0 rounded-3 shadow-sm"
+                style={{ height: "52px" }}
+              >
                 <option value="">Select your role...</option>
                 <option value="Student">Student</option>
                 <option value="Working Professional">Working Professional</option>
               </Form.Select>
-            </Form.Group>
+              {errors.role && <small className="text-danger d-block mt-1">{errors.role}</small>}
+            </div>
 
-            {/* Conditional fields remain unchanged */}
+            {/* Student Fields */}
             {formData.role === "Student" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <hr className="border-secondary my-4" />
-                <Row className="g-3">
-                  <Col md={6}><Form.Label className="text-white">College *</Form.Label><Form.Control name="college" value={formData.college} onChange={handleChange} className="bg-dark text-white border-0" /></Col>
-                  <Col md={6}><Form.Label className="text-white">Degree *</Form.Label><Form.Control name="degree" value={formData.degree} onChange={handleChange} className="bg-dark text-white border-0" /></Col>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="mt-5 pt-4 border-top border-secondary"
+              >
+                <h5 className="text-info mb-4 fw-bold">Student Details</h5>
+                <Row className="g-4">
+                  <Col md={6}>
+                    <Form.Label className="text-white fw-medium">College *</Form.Label>
+                    <Form.Control name="college" value={formData.college} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="Your college name" />
+                  </Col>
+                  <Col md={6}>
+                    <Form.Label className="text-white fw-medium">Degree *</Form.Label>
+                    <Form.Control name="degree" value={formData.degree} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., B.Tech, B.Sc" />
+                  </Col>
                 </Row>
-                <Row className="g-3 mt-2">
-                  <Col md={6}><Form.Label className="text-white">Branch *</Form.Label><Form.Control name="branch" value={formData.branch} onChange={handleChange} className="bg-dark text-white border-0" /></Col>
-                  <Col md={6}><Form.Label className="text-white">Passing Year *</Form.Label><Form.Control name="passingYear" value={formData.passingYear} onChange={handleChange} className="bg-dark text-white border-0" /></Col>
+                <Row className="g-4 mt-3">
+                  <Col md={6}>
+                    <Form.Label className="text-white fw-medium">Branch *</Form.Label>
+                    <Form.Control name="branch" value={formData.branch} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., CSE, ECE" />
+                  </Col>
+                  <Col md={6}>
+                    <Form.Label className="text-white fw-medium">Passing Year *</Form.Label>
+                    <Form.Control name="passingYear" value={formData.passingYear} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., 2026" />
+                  </Col>
                 </Row>
-                <Form.Group className="mt-3"><Form.Label className="text-white">Location *</Form.Label><Form.Control name="location" value={formData.location} onChange={handleChange} className="bg-dark text-white border-0" /></Form.Group>
+                <div className="mt-3">
+                  <Form.Label className="text-white fw-medium">Location *</Form.Label>
+                  <Form.Control name="location" value={formData.location} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="City, State" />
+                </div>
               </motion.div>
             )}
 
+            {/* Working Professional Fields - description removed */}
             {formData.role === "Working Professional" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <hr className="border-secondary my-4" />
-                <Form.Group className="mt-3"><Form.Label className="text-white">Organization *</Form.Label><Form.Control name="organization" value={formData.organization} onChange={handleChange} className="bg-dark text-white border-0" /></Form.Group>
-                <Row className="g-3 mt-3">
-                  <Col md={6}><Form.Label className="text-white">Experience (years) *</Form.Label><Form.Control name="experience" value={formData.experience} onChange={handleChange} className="bg-dark text-white border-0" /></Col>
-                  <Col md={6}><Form.Label className="text-white">Work Location *</Form.Label><Form.Control name="workLocation" value={formData.workLocation} onChange={handleChange} className="bg-dark text-white border-0" /></Col>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="mt-5 pt-4 border-top border-secondary"
+              >
+                <h5 className="text-info mb-4 fw-bold">Professional Details</h5>
+                <Form.Group className="mb-4">
+                  <Form.Label className="text-white fw-medium">Organization *</Form.Label>
+                  <Form.Control name="organization" value={formData.organization} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="Company name" />
+                </Form.Group>
+                <Row className="g-4">
+                  <Col md={6}>
+                    <Form.Label className="text-white fw-medium">Experience (years) *</Form.Label>
+                    <Form.Control name="experience" value={formData.experience} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., 3" />
+                  </Col>
+                  <Col md={6}>
+                    <Form.Label className="text-white fw-medium">Work Location *</Form.Label>
+                    <Form.Control name="workLocation" value={formData.workLocation} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="City, State" />
+                  </Col>
                 </Row>
-                <Form.Group className="mt-3"><Form.Label className="text-white">Brief Description *</Form.Label><Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleChange} className="bg-dark text-white border-0" /></Form.Group>
               </motion.div>
             )}
 
-            <div className="text-end mt-5">
-              <Button type="submit" size="lg" className="px-5 rounded-pill fw-bold" style={{ background: "linear-gradient(90deg, #10b981, #34d399)", border: "none" }}>
-                Complete Registration
+            {/* Submit Button */}
+            <div className="text-center mt-5">
+              <Button
+                type="submit"
+                size="lg"
+                className="px-5 py-3 rounded-pill fw-bold shadow-lg"
+                style={{
+                  background: "linear-gradient(90deg, #10b981, #34d399)",
+                  border: "none",
+                  fontSize: "1.1rem",
+                }}
+              >
+                Complete Registration ✨
               </Button>
             </div>
           </Form>
