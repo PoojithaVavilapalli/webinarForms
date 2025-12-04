@@ -1,0 +1,69 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.phone-custom .form-control {
+  background: #fff !important;
+  border: 1px solid #cacaca !important;
+  border-radius: 5px !important;
+  color: #495057 !important;
+  font-size: 16px !important;
+  outline: none !important;
+  padding: 8px 12px 8px 60px !important; /* Adjusted to match email height */
+  transition: box-shadow 0.25s ease, border-color 0.25s ease !important;
+  height: 38px !important; /* Exact Bootstrap height */
+  width: 100% !important; /* Responsive */
+}
+
+/* Country flag dropdown */
+.phone-custom .flag-dropdown {
+  background: #fff !important;
+  border: 1px solid #cacaca !important;
+  border-radius: 5px 0 0 5px !important;
+  height: 38px !important;
+}
+
+/* Align selected flag */
+.phone-custom .selected-flag {
+  height: 38px !important;
+  padding: 0 10px !important;
+}
+
+.phone-custom input {
+  height: 38px !important;
+}
+
