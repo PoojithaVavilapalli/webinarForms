@@ -92,7 +92,7 @@ const WebinarPage = () => {
     if (!validateForm()) return;
 
     try {
-      await axios.post("http://localhost:5000/api/register", formData);
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/register`, formData);
       alert("🎉 Registration Successful! Check your email.");
       handleClose();
     } catch (err) {
