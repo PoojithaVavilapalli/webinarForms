@@ -112,7 +112,7 @@ app.post("/api/register", (req, res) => {
           <div style="padding: 30px; text-align: left; color: #333;">
             <h2 style="color: #002855;">Thank You, ${firstName}!</h2>
             <p style="font-size: 16px; line-height: 1.6;">
-              You have successfully registered for the <b>CyberShield 2025</b>.
+              You have successfully registered for the <b>Cloud Xcelerate with AWS</b>.
             </p>
             <p style="font-size: 16px; line-height: 1.6;">
               Date: 17-Dec-2025<br>
