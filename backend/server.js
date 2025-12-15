@@ -99,7 +99,7 @@ app.post("/api/register", (req, res) => {
           resend.emails.send({
             from:`MeleteNova <${process.env.SENDER_EMAIL}>`,
             to: userEmail,
-            subject: "🎉 Registration Successful - Cybersecurity Webinar",
+            subject: "🎉 Registration Successful - Cloud Xcelerate with AWS",
             html: `<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7f8fa; padding: 40px;">
           <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden;">
           
@@ -115,7 +115,7 @@ app.post("/api/register", (req, res) => {
               You have successfully registered for the <b>CyberShield 2025</b>.
             </p>
             <p style="font-size: 16px; line-height: 1.6;">
-              Date: 07-Dec-2025<br>
+              Date: 17-Dec-2025<br>
               Time: 10 AM - 11:30 AM<br>
               Webinar link will be shared soon.
             </p>
@@ -193,7 +193,7 @@ app.post("/api/register", (req, res) => {
                <span style="font-size: 15px; display: block; margin: 0;">Warm regards,</span>
   <span style="font-weight: bold; color: #002855; font-size: 18px; display: block; margin: 0;">The Meletenova Team</span>
   <span style="font-size: 14px; color: #777; display: block; margin: 0;">Innovating Beyond Expectations</span>
-  <img src="https://meletenova.com/assets/Logo.png" alt="Meletenova Logo" style="height: 50px; margin-top: 6px; display: block;" />
+  <img src="https://meletenova.com/assets/Asset%203.png" alt="Meletenova Logo" style="height: 50px; margin-top: 6px; display: block;" />
             </div>
           </div>
 

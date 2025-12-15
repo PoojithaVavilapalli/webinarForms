@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col, Toast, ToastContainer } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import axios from "axios";
 import { motion } from "framer-motion";
 import "./webinarpage.css";
-
 
 const WebinarPage = () => {
   const [show, setShow] = useState(false);
@@ -14,63 +14,67 @@ const WebinarPage = () => {
     firstName: "", lastName: "", email: "", phone: "", role: "", linkedIn: "",
     college: "", degree: "", branch: "", passingYear: "", location: "",
     organization: "", experience: "", workLocation: "",
-    // description field removed
   });
-   const initialForm = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    role: "",
-    linkedIn: "",
-    college: "",
-    degree: "",
-    branch: "",
-    passingYear: "",
-    location: "",
-    organization: "",
-    experience: "",
-    workLocation: "",
-  };
+   const [isSubmitting, setIsSubmitting] = useState(false);
+const [showSuccess, setShowSuccess] = useState(false);
 
+  const initialForm = { ...formData };
   const [errors, setErrors] = useState({});
-  
-  // Toast states
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
+  const modules = [
+    "Cloud Computing Fundamentals",
+    "Evolution of Cloud Technology",
+    "Cloud Service Delivery Models",
+    "Cloud Deployment Strategies",
+    "Cloud Engineer Role Definition",
+    "Core Cloud Building Blocks",
+    "Cloud Security Foundation",
+    "Practical Demonstration / Use Case",
+    "Cloud Cost & Billing Awareness",
+    "Cloud Career Landscape",
+    "Learning Resources & Takeaways",
+  ];
+
   const handleOpen = () => setShow(true);
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setErrors({});
+    setFormData(initialForm);
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: "" });
+    }
   };
 
   const handlePhoneChange = (value) => {
     setFormData({ ...formData, phone: value });
+    if (errors.phone) setErrors({ ...errors, phone: "" });
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.firstName) newErrors.firstName = "Required";
-    if (!formData.lastName) newErrors.lastName = "Required";
-    if (!formData.email) newErrors.email = "Required";
-    else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Invalid email";
-    if (!formData.phone || formData.phone.length < 10) newErrors.phone = "Valid phone required";
-    if (!formData.role) newErrors.role = "Required";
+    if (!formData.firstName.trim()) newErrors.firstName = "Required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Required";
+    if (!formData.email.trim()) newErrors.email = "Required";
+    else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Invalid email format";
+    if (!formData.phone || formData.phone.length < 10) newErrors.phone = "Valid phone number required";
+    if (!formData.role) newErrors.role = "Please select your role";
 
     if (formData.role === "Student") {
-      if (!formData.college) newErrors.college = "Required";
-      if (!formData.degree) newErrors.degree = "Required";
-      if (!formData.branch) newErrors.branch = "Required";
-      if (!formData.passingYear) newErrors.passingYear = "Required";
-      if (!formData.location) newErrors.location = "Required";
+      if (!formData.college.trim()) newErrors.college = "Required";
+      if (!formData.degree.trim()) newErrors.degree = "Required";
+      if (!formData.branch.trim()) newErrors.branch = "Required";
+      if (!formData.passingYear.trim()) newErrors.passingYear = "Required";
+      if (!formData.location.trim()) newErrors.location = "Required";
     }
-
     if (formData.role === "Working Professional") {
-      if (!formData.organization) newErrors.organization = "Required";
-      if (!formData.experience) newErrors.experience = "Required";
-      if (!formData.workLocation) newErrors.workLocation = "Required";
-      // description validation removed
+      if (!formData.organization.trim()) newErrors.organization = "Required";
+      if (!formData.experience.trim()) newErrors.experience = "Required";
+      if (!formData.workLocation.trim()) newErrors.workLocation = "Required";
     }
 
     setErrors(newErrors);
@@ -80,52 +84,50 @@ const WebinarPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+    setIsSubmitting(true)
 
     try {
       await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/register`, formData);
-      console.log(`${process.env.REACT_APP_BACKEND_URL}/api/register`);
-      setFormData(initialForm);
+      setIsSubmitting(false)
       handleClose();
-      setToast({ show: true, message: "Thank you! 🎉 Registration Successful! Check your email.", type: "success" });
+    setShowSuccess(true);
     } catch (err) {
-      setToast({ show: true, message: "Error submitting form. Please try again.", type: "danger" });
+      setToast({ show: true, message: "Submission failed. Please try again later.", type: "danger" });
     }
   };
 
   return (
     <>
-      {/* Toast Container - placed at top-right of the screen */}
       <ToastContainer position="top-end" className="p-3" style={{ zIndex: 1050 }}>
         <Toast
           onClose={() => setToast({ ...toast, show: false })}
           show={toast.show}
-          delay={5000}
+          delay={6000}
           autohide
           bg={toast.type}
-          className="text-white shadow-lg"
+          className="text-white shadow-lg border-0"
         >
           <Toast.Header closeButton className="bg-transparent border-0">
             <strong className="me-auto">
-              {toast.type === "success" ? "✅ Success" : "❌ Error"}
+              {toast.type === "success" ? <i className="bi bi-check-circle me-2"></i> : <i className="bi bi-exclamation-triangle me-2"></i>}
+              {toast.type === "success" ? "Success" : "Error"}
             </strong>
           </Toast.Header>
-          <Toast.Body className="fw-medium fs-5">{toast.message}</Toast.Body>
+          <Toast.Body className="fw-medium">{toast.message}</Toast.Body>
         </Toast>
       </ToastContainer>
 
-      {/* Main Background - unchanged */}
       <div
         className="min-vh-100"
         style={{
           background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
           color: "#e2e8f0",
-          padding: "40px 20px",
+          padding: "40px 15px",
           fontFamily: "'Poppins', sans-serif",
         }}
       >
-        <div className="container" style={{ maxWidth: "1200px" }}>
-          {/* Logo - Left Aligned */}
-          <motion.div
+        <div className="container" style={{ maxWidth: "1280px" }}>
+       <motion.div
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
@@ -138,167 +140,190 @@ const WebinarPage = () => {
             />
           </motion.div>
 
-          {/* Hero Section: Image + Content */}
           <div className="row align-items-start g-5">
-            {/* Left: Poster Image + CTA */}
-            <div className="col-lg-6 order-lg-1 order-2">
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.8 }}
-                className="text-center text-lg-start mb-4"
-              >
-                <img
-                  src="/assets/poster.jpg"
-                  alt="Webinar Poster"
-                  className="img-fluid rounded-4 shadow-2xl"
-                  style={{
-                    maxWidth: "100%",
-                    height: "auto",
-                    border: "8px solid rgba(255,255,255,0.15)",
-                    boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-                  }}
-                />
-              </motion.div>
-
-              <div className="d-lg-none text-center mt-4"></div>
-
-              <div className="d-none d-lg-block text-center">
-                <div className="d-inline-block bg-primary text-white px-4 py-2 rounded-pill mt-20 fs-6" style={{
-                  marginTop:"50px",
-                  minWidth: "200px"
-                }}>
-                  ⏰ Duration: 1 hr 30 mins -- Free Registration
-                </div>
-                <br />
-                <Button
-                  onClick={handleOpen}
-                  size="lg"
-                  className="shadow-lg px-5 py-3 rounded-pill fw-bold"
-                  style={{
-                    background: "linear-gradient(90deg, #3b82f6, #8b5cf6)",
-                    border: "none",
-                    fontSize: "1.3rem",
-                    minWidth: "200px",
-                    marginTop:"50px"
-                  }}
-                >
-                  Register Now 
-                </Button>
-              </div>
-            </div>
-
-            {/* Right: All Text Content + Perks/Demos */}
+            {/* Right Column: Content (Title, Overview, Modules, CTA) */}
             <div className="col-lg-6 order-lg-2 order-1">
               <motion.div
-                initial={{ x: 100, opacity: 0 }}
+                initial={{ x: 80, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
+                transition={{ duration: 0.9, delay: 0.2 }}
               >
-                <h1 className="display-8 fw-bold mb-4" style={{ color: "#60a5fa" }}>
-                  CyberShield 2025
+                <h1 className="display-5 fw-bold mb-4 text-center text-lg-start" style={{ color: "#60a5fa", lineHeight: "1.2" }}>
+                  Cloud Computing & Cloud Engineering Workshop
                 </h1>
 
-                <div className="mb-5">
-                  <h3 className="fw-bold text-info mb-3">Why This Webinar Matters</h3>
-                  <p className="lead">
-                    Cyber attacks are increasing daily. Most people don’t realize how easily their phones, passwords, and data can be compromised.
+                <div className="bg-slate-800 bg-opacity-50 rounded-4 p-4 p-md-5 mb-5 shadow-lg">
+                  <h3 className="fw-bold text-info mb-3">Workshop Overview</h3>
+                  <p className="lead text-light">
+                    A comprehensive  workshop designed for students and professionals aspiring to build a career in cloud technology. 
+                    Gain practical insights into cloud engineering roles, core concepts, live demonstrations, and a clear career roadmap.
                   </p>
-                  <p>This live session will change the way you see cybersecurity forever.</p>
                 </div>
 
-                <h3 className="fw-bold text-success mb-3">What You Will Learn</h3>
-                <ul className="list-unstyled mb-5">
-                  {[
-                    "How hackers think and operate",
-                    "Cybersecurity vs Ethical Hacking",
-                    "Malware, botnets & real exploits",
-                    "Top 5 myths that put you at risk",
-                    "Live OTP bypass demo (SIM swap)",
-                    "Secure your accounts in 10 mins"
-                  ].map((item, i) => (
-                    <motion.li
-                      key={i}
-                      initial={{ x: -30, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="mb-3 d-flex align-items-center fs-5"
+                <h3 className="fw-bold text-success mb-4">Workshop Modules</h3>
+                <div className="bg-slate-800 bg-opacity-70 backdrop-blur-sm rounded-4 shadow-xl overflow-hidden">
+                  {modules.map((title, index) => (
+                    <div
+                      key={index}
+                      className="d-flex align-items-center px-4 px-md-5 py-3 transition-all"
+                      style={{
+                        backgroundColor: "rgba(15, 23, 42, 0.4)",
+                        cursor: "default",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(30, 41, 59, 0.6)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "rgba(15, 23, 42, 0.4)")}
                     >
-                      <span className="text-warning me-3">✦</span> {item}
-                    </motion.li>
+                      <span
+                        className="fw-bold me-4 flex-shrink-0"
+                        style={{
+                          color: "#60a5fa",
+                          fontSize: "1.4rem",
+                          width: "40px",
+                          textAlign: "center",
+                        }}
+                      >
+                        {index + 1}
+                      </span>
+                      <span className="text-light" style={{ fontSize: "1.1rem" }}>
+                        {title}
+                      </span>
+                    </div>
                   ))}
-                </ul>
-
-                <hr className="border-secondary opacity-30 my-5" />
-
-                <div className="row g-5">
-                  <div className="col-md-6">
-                    <h4 className="text-success fw-bold mb-3">Perks You Get</h4>
-                    <ul className="list-unstyled">
-                      {[
-                        "Cybersecurity Roadmap PDF",
-                        "Tool List & Cheat Sheets",
-                        "Phishing Checklist",
-                        "Exclusive Community Access",
-                        "E-Certificate"
-                      ].map((p, i) => (
-                        <li key={i} className="mb-2">
-                          <span className="text-success me-2">✓</span> {p}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="col-md-6">
-                    <h4 className="text-danger fw-bold mb-3">Live Demos</h4>
-                    <ul className="list-unstyled">
-                      {[
-                        "Fake login pages",
-                        "URL manipulation",
-                        "Password capture simulation",
-                        "Instant fake link detection"
-                      ].map((d, i) => (
-                        <li key={i} className="mb-2">
-                          <span className="text-danger me-2">⚡</span> {d}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
                 </div>
 
-                <div className="d-lg-none text-center mt-5">
-                  <div className="d-inline-block bg-primary text-white px-4 py-2 rounded-pill mb-4 fs-6">
-                    ⏰ Duration: 1 hr 20 mins • Free Registration
+                {/* Session Info + OK Button (visible on all screens, placed here for mobile flow) */}
+                <div className="text-center mt-5">
+                  <br /><br />
+                  <div className="d-inline-block bg-primary text-white px-4 py-2 rounded-pill mb-4 fw-medium ">
+                    <i className="bi bi-clock me-2"></i>1 hour 30 min • Free Workshop
                   </div>
                   <br />
                   <Button
                     onClick={handleOpen}
                     size="lg"
-                    className="shadow-lg px-5 py-3 rounded-pill fw-bold"
+                    className="shadow-lg px-5 py-4 rounded-pill fw-bold w-50"
                     style={{
                       background: "linear-gradient(90deg, #3b82f6, #8b5cf6)",
                       border: "none",
                       fontSize: "1.3rem",
-                      minWidth: "300px",
                     }}
                   >
                     Register Now
+          
                   </Button>
                 </div>
+              </motion.div>
+            </div>
+
+            {/* Left Column: Poster + Learning Sections (Image moved to bottom on mobile) */}
+            <div className="col-lg-6 order-lg-1 order-2">
+              {/* Desktop/Tablet: Image at top */}
+              <motion.div
+                initial={{ scale: 0.98, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.9 }}
+                className="text-center mb-5 d-none d-lg-block"
+              >
+                <img
+                  src="/assets/aws.png"
+                  alt="Cloud Engineering Workshop Poster"
+                  className="img-fluid rounded-4"
+                  style={{
+                    maxWidth: "100%",
+                    border: "8px solid rgba(96, 165, 250, 0.2)",
+                    boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
+                  }}
+                />
+              </motion.div>
+
+              {/* What You'll Learn */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="bg-slate-800 bg-opacity-70 backdrop-blur-sm rounded-4 p-4 p-md-5 shadow-xl mb-5 border border-slate-700"
+              >
+                <h3 className="fw-bold text-info mb-4 text-center">
+                  <i className="bi bi-mortarboard-fill me-2"></i>What You'll Learn
+                </h3>
+                <div className="row g-4">
+                  {[
+                    "Cloud computing fundamentals and modern architecture patterns",
+                    "IaaS, PaaS, SaaS — service models explained with real examples",
+                    "Public, Private, Hybrid clouds — deployment strategies",
+                    "Core services: Compute, Storage, Networking, Databases",
+                    "Cost management, billing awareness, and optimization techniques",
+                  ].map((item, i) => (
+                    <div key={i} className="col-12">
+                      <div className="d-flex align-items-start">
+                        <i className="bi bi-check-circle-fill text-success mt-1 me-3 flex-shrink-0"></i>
+                        <p className="mb-0 text-light">{item}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Key Takeaways & Perks */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                className="bg-slate-800 bg-opacity-70 backdrop-blur-sm rounded-4 p-4 p-md-5 shadow-xl mb-5 border border-slate-700"
+              >
+                <h3 className="fw-bold text-primary mb-4 text-center">
+                  <i className="bi bi-gift-fill me-2"></i>Key Takeaways & Benefits
+                </h3>
+                <div className="row g-4">
+                  {[
+                    "Certificate of Participation upon completion",
+                    "Live Hands-on Demo of real cloud engineering workflows",
+                    "Expert Career Guidance and cloud job market insights",
+                    " Intensive Session packed with practical knowledge",
+                    "Exclusive Learning Resources & Takeaways shared post-workshop",
+                  ].map((item, i) => (
+                    <div key={i} className="col-12">
+                      <div className="d-flex align-items-start">
+                        <i className="bi bi-check-circle-fill text-success mt-1 me-3 flex-shrink-0"></i>
+                        <p className="mb-0 text-light">{item}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Mobile: Image at the very bottom */}
+              <motion.div
+                initial={{ scale: 0.98, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.9 }}
+                className="text-center mt-5 d-lg-none"
+              >
+                <img
+                  src="/assets/aws.png"
+                  alt="Cloud Engineering Workshop Poster"
+                  className="img-fluid rounded-4"
+                  style={{
+                    maxWidth: "100%",
+                    border: "8px solid rgba(96, 165, 250, 0.2)",
+                    boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
+                  }}
+                />
               </motion.div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* MODAL - Clean form without progress bar or description field */}
+      {/* Modal (unchanged) */}
       <Modal show={show} onHide={handleClose} centered size="lg" backdrop="static">
         <Modal.Header closeButton className="border-0 text-white" style={{ background: "linear-gradient(90deg, #1e3a8a, #3b82f6)" }}>
-          <Modal.Title className="fw-medium fs-4">Complete Your Registration</Modal.Title>
+          <Modal.Title className="fw-semibold">Complete Your Free Registration</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="p-5" style={{ background: "#0f172a" }}>
+        <Modal.Body className="p-4 p-md-5" style={{ background: "#0f172a" }}>
           <Form onSubmit={handleSubmit}>
-            {/* Common Fields */}
             <Row className="g-4">
               <Col md={6}>
                 <Form.Label className="text-white fw-medium">First Name <span className="text-danger">*</span></Form.Label>
@@ -309,7 +334,7 @@ const WebinarPage = () => {
                   isInvalid={!!errors.firstName}
                   className="bg-dark text-white border-0 rounded-3 shadow-sm"
                   style={{ height: "52px" }}
-                  placeholder="Enter your first name"
+                  placeholder="First name"
                 />
                 <Form.Control.Feedback type="invalid">{errors.firstName}</Form.Control.Feedback>
               </Col>
@@ -322,7 +347,7 @@ const WebinarPage = () => {
                   isInvalid={!!errors.lastName}
                   className="bg-dark text-white border-0 rounded-3 shadow-sm"
                   style={{ height: "52px" }}
-                  placeholder="Enter your last name"
+                  placeholder="Last name"
                 />
                 <Form.Control.Feedback type="invalid">{errors.lastName}</Form.Control.Feedback>
               </Col>
@@ -349,10 +374,8 @@ const WebinarPage = () => {
                   country="in"
                   value={formData.phone}
                   onChange={handlePhoneChange}
-                  inputClass="w-100 bg-dark text-white border-0 rounded-3 shadow-sm"
-                  containerClass="mt-1"
-                  inputStyle={{ height: "52px", background: "#1e293b", border: "none", color: "#fff" }}
-                  buttonClass="bg-dark border-0"
+                  inputStyle={{ height: "52px", background: "#1e293b", border: "none", color: "#fff", width: "100%" }}
+                  buttonStyle={{ background: "#1e293b", border: "none" }}
                 />
                 {errors.phone && <small className="text-danger d-block mt-1">{errors.phone}</small>}
               </Col>
@@ -364,6 +387,7 @@ const WebinarPage = () => {
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
+                isInvalid={!!errors.role}
                 className="bg-dark text-white border-0 rounded-3 shadow-sm"
                 style={{ height: "52px" }}
               >
@@ -374,86 +398,98 @@ const WebinarPage = () => {
               {errors.role && <small className="text-danger d-block mt-1">{errors.role}</small>}
             </div>
 
-            {/* Student Fields */}
             {formData.role === "Student" && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="mt-5 pt-4 border-top border-secondary"
-              >
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mt-5 pt-4 border-top border-secondary">
                 <h5 className="text-info mb-4 fw-bold">Student Details</h5>
                 <Row className="g-4">
-                  <Col md={6}>
-                    <Form.Label className="text-white fw-medium">College *</Form.Label>
-                    <Form.Control name="college" value={formData.college} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="Your college name" />
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="text-white fw-medium">Degree *</Form.Label>
-                    <Form.Control name="degree" value={formData.degree} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., B.Tech, B.Sc" />
-                  </Col>
+                  <Col md={6}><Form.Label className="text-white fw-medium">College *</Form.Label><Form.Control name="college" value={formData.college} onChange={handleChange} isInvalid={!!errors.college} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="Your college name" /><Form.Control.Feedback type="invalid">{errors.college}</Form.Control.Feedback></Col>
+                  <Col md={6}><Form.Label className="text-white fw-medium">Degree *</Form.Label><Form.Control name="degree" value={formData.degree} onChange={handleChange} isInvalid={!!errors.degree} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., B.Tech" /><Form.Control.Feedback type="invalid">{errors.degree}</Form.Control.Feedback></Col>
                 </Row>
                 <Row className="g-4 mt-3">
-                  <Col md={6}>
-                    <Form.Label className="text-white fw-medium">Branch *</Form.Label>
-                    <Form.Control name="branch" value={formData.branch} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., CSE, ECE" />
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="text-white fw-medium">Passing Year *</Form.Label>
-                    <Form.Control name="passingYear" value={formData.passingYear} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., 2026" />
-                  </Col>
+                  <Col md={6}><Form.Label className="text-white fw-medium">Branch *</Form.Label><Form.Control name="branch" value={formData.branch} onChange={handleChange} isInvalid={!!errors.branch} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., CSE" /><Form.Control.Feedback type="invalid">{errors.branch}</Form.Control.Feedback></Col>
+                  <Col md={6}><Form.Label className="text-white fw-medium">Passing Year *</Form.Label><Form.Control name="passingYear" value={formData.passingYear} onChange={handleChange} isInvalid={!!errors.passingYear} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., 2026" /><Form.Control.Feedback type="invalid">{errors.passingYear}</Form.Control.Feedback></Col>
                 </Row>
                 <div className="mt-3">
                   <Form.Label className="text-white fw-medium">Location *</Form.Label>
-                  <Form.Control name="location" value={formData.location} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="City, State" />
+                  <Form.Control name="location" value={formData.location} onChange={handleChange} isInvalid={!!errors.location} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="City, State" />
+                  <Form.Control.Feedback type="invalid">{errors.location}</Form.Control.Feedback>
                 </div>
               </motion.div>
             )}
 
-            {/* Working Professional Fields - description removed */}
             {formData.role === "Working Professional" && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="mt-5 pt-4 border-top border-secondary"
-              >
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mt-5 pt-4 border-top border-secondary">
                 <h5 className="text-info mb-4 fw-bold">Professional Details</h5>
                 <Form.Group className="mb-4">
                   <Form.Label className="text-white fw-medium">Organization *</Form.Label>
-                  <Form.Control name="organization" value={formData.organization} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="Company name" />
+                  <Form.Control name="organization" value={formData.organization} onChange={handleChange} isInvalid={!!errors.organization} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="Company name" />
+                  <Form.Control.Feedback type="invalid">{errors.organization}</Form.Control.Feedback>
                 </Form.Group>
                 <Row className="g-4">
-                  <Col md={6}>
-                    <Form.Label className="text-white fw-medium">Experience (years) *</Form.Label>
-                    <Form.Control name="experience" value={formData.experience} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., 3" />
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label className="text-white fw-medium">Work Location *</Form.Label>
-                    <Form.Control name="workLocation" value={formData.workLocation} onChange={handleChange} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="City, State" />
-                  </Col>
+                  <Col md={6}><Form.Label className="text-white fw-medium">Experience (years) *</Form.Label><Form.Control name="experience" value={formData.experience} onChange={handleChange} isInvalid={!!errors.experience} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="e.g., 3" /><Form.Control.Feedback type="invalid">{errors.experience}</Form.Control.Feedback></Col>
+                  <Col md={6}><Form.Label className="text-white fw-medium">Work Location *</Form.Label><Form.Control name="workLocation" value={formData.workLocation} onChange={handleChange} isInvalid={!!errors.workLocation} className="bg-dark text-white border-0 rounded-3 shadow-sm" style={{ height: "52px" }} placeholder="City, State" /><Form.Control.Feedback type="invalid">{errors.workLocation}</Form.Control.Feedback></Col>
                 </Row>
               </motion.div>
             )}
 
-            {/* Submit Button */}
             <div className="text-center mt-5">
               <Button
                 type="submit"
                 size="lg"
-                className="px-5 py-3 rounded-pill fw-bold shadow-lg"
+                className="px-5 py-3 rounded-pill fw-bold shadow-lg w-100 w-md-auto"
                 style={{
                   background: "linear-gradient(90deg, #10b981, #34d399)",
                   border: "none",
-                  fontSize: "1.1rem",
+                  fontSize: "1.2rem",
                 }}
               >
-                Complete Registration ✨
+                {isSubmitting ? (
+    <>
+      <span className="spinner-border spinner-border-sm me-2"></span>
+      Registering...
+    </>
+  ) : (
+    "Complete Registration ✨"
+  )}
               </Button>
             </div>
           </Form>
         </Modal.Body>
       </Modal>
+      <Modal
+  show={showSuccess}
+  onHide={() => setShowSuccess(false)}
+  centered
+  backdrop="static"
+>
+  <Modal.Body className="text-center p-5" style={{ background: "#0f172a" }}>
+    <i
+      className="bi bi-check-circle-fill text-success"
+      style={{ fontSize: "4rem" }}
+    ></i>
+
+    <h3 className="mt-4 text-white fw-bold">
+      Registration Successful 🎉
+    </h3>
+
+    <p className="text-light mt-3">
+      Thank you for registering!  
+      We’ve sent the workshop details to your email.
+    </p>
+
+    <Button
+      className="mt-4 px-4 py-2 rounded-pill fw-bold"
+      style={{
+        background: "linear-gradient(90deg, #3b82f6, #8b5cf6)",
+        border: "none",
+      }}
+      onClick={() => setShowSuccess(false)}
+    >
+      Got it 👍
+    </Button>
+  </Modal.Body>
+</Modal>
+
     </>
   );
 };
