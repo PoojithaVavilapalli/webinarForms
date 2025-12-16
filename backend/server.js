@@ -116,74 +116,10 @@ app.post("/api/register", (req, res) => {
             </p>
             <p style="font-size: 16px; line-height: 1.6;">
               Date: 17-Dec-2025<br>
-              Time: 7 PM - 8:30 PM<br>
-              Webinar link will be shared soon.
+              Time: 7 PM - 8.30 PM
             </p>
-            <p style="font-size: 16px; line-height: 1.6;">
-              If you have any queries, feel free to contact us at
-              <a href="mailto:${process.env.QUERIES_MAIL}" style="color: #002855; text-decoration: none;"><b>${process.env.QUERIES_MAIL}</b></a>.
-            </p>
-             <div style="margin-top:5px;">
-               <span style="font-size: 15px; display: block; margin: 0;">Warm regards,</span>
-  <span style="font-weight: bold; color: #002855; font-size: 18px; display: block; margin: 0;">The Meletenova Team</span>
-  <span style="font-size: 14px; color: #777; display: block; margin: 0;">Innovating Beyond Expectations</span>
-  <img src="https://meletenova.com/assets/Logo.png" alt="Meletenova Logo" style="height: 50px; margin-top: 6px; display: block;" />
-            </div>
-          </div>
-
-          
-          <div style="background-color: #f1f3f6; text-align: center; padding: 20px; font-size: 13px; color: #555;">
-            <p style="margin: 5px 0;">Meletenova | <a href="https://meletenova.com" style="color: #002855; text-decoration: none;">meletenova.com</a></p>
-            <p style="margin: 5px 0; color: #666;">Empowering your digital future through innovative IT services and certification programs.</p>
-            <p style="margin: 10px 0;">Follow us on</p>
-
-            <div style="margin-top: 8px;">
-              <a href="https://www.facebook.com/meletenova" style="margin: 0 8px;" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="24" height="24" />
-              </a>
-              <a href="https://x.com/meletenova" style="margin: 0 8px;" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter" width="24" height="24" />
-              </a>
-                <a href="https://www.linkedin.com/company/meletenova-solutions-pvt-ltd/?viewAsMember=true" style="margin: 0 8px;" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/145/145807.png" alt="LinkedIn" width="24" height="24" />
-              </a>
-              <a href="https://www.youtube.com/@MeleteNovaSolutionsPrivateLimi" style="margin: 0 8px;" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="26" height="26" />
-              </a>
-              <a href="https://www.instagram.com/melete.k_?igsh=MXExMnF2NW5ocHgyOQ==" style="margin: 0 8px;" target="_blank">
-                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="24" height="24" />
-              </a>
-            </div>
-
-            <p style="margin-top: 15px; font-size: 12px; color: #999;">
-              © ${new Date().getFullYear()} MeleteNova Solutions. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </div>`,
-     }),
-
-          resend.emails.send({
-            from: `MeleteNova <${process.env.SENDER_EMAIL}>`,
-            to: teamHeadEmail,
-            subject: "📥 New Webinar Registration Received",
-            html:`<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7f8fa; padding: 40px;">
-          <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden;">
-          
-          <div style="background-color: #002855; padding: 20px; text-align: center;">
-            <img src="https://meletenova.com/assets/logo2.png" alt="Meletenova Logo" style="height: 60px;" />
-          </div>
-
-          
-          <div style="padding: 30px; text-align: left; color: #333;">
-            <h2 style="color: #002855;">Thank You, ${firstName}!</h2>
-            <p style="font-size: 16px; line-height: 1.6;">
-              You have successfully registered for the <b>CyberShield 2025</b>.
-            </p>
-            <p style="font-size: 16px; line-height: 1.6;">
-              Date: 07-Dec-2025<br>
-              Time: 10 AM - 11:30 AM<br>
-              Webinar link will be shared soon.
+              <p style="font-size: 16px; line-height: 1.6;">
+             Webinar link will be shared soon
             </p>
             <p style="font-size: 16px; line-height: 1.6;">
               If you have any queries, feel free to contact us at
@@ -227,7 +163,9 @@ app.post("/api/register", (req, res) => {
           </div>
         </div>
       </div>`,
-          }),
+     })
+
+        
         ]);
 
 
