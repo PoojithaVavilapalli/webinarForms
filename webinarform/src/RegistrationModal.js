@@ -225,7 +225,7 @@ const [showSuccess, setShowSuccess] = useState(false);
                 className="text-center mb-5 d-none d-lg-block"
               >
                 <img
-                  src="/assets/aws.png"
+                  src="/assets/aws1.png"
                   alt="Cloud Engineering Workshop Poster"
                   className="img-fluid rounded-4"
                   style={{

@@ -116,7 +116,7 @@ app.post("/api/register", (req, res) => {
             </p>
             <p style="font-size: 16px; line-height: 1.6;">
               Date: 17-Dec-2025<br>
-              Time: 10 AM - 11:30 AM<br>
+              Time: 7 PM - 8:30 PM<br>
               Webinar link will be shared soon.
             </p>
             <p style="font-size: 16px; line-height: 1.6;">
